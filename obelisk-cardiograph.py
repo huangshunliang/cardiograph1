@@ -13,21 +13,24 @@ import zmq
 def main():
     """ main method """
 
-    # Prepare our context and publisher
-    context    = zmq.Context()
-    subscriber = context.socket(zmq.SUB)
-    subscriber.connect("tcp://79.98.29.93:9092")
-    subscriber.setsockopt(zmq.SUBSCRIBE, b"B")
+    serverip = '79.98.29.93'
+    serverport = '9092'
+
+    ctx = zmq.Context()
+    s = ctx.socket(zmq.SUB)
+    s.connect('tcp://' + serverip + ':' + serverport)
+    s.setsockopt(zmq.SUBSCRIBE, b'')    # subscribe to everything
 
     print("Entering main loop.")
     while True:
-        # Read envelope with address
-        [address, contents] = subscriber.recv_multipart()
-        print("[%s] %s" % (address, contents))
+        reply = s.recv()
+        reply = reply[::-1] # obelisk sent little-endian
+        data = ':'.join(hex(x)[2:] for x in reply)
+        print(serverip, data)
 
     # We never get here but clean up anyhow
-    subscriber.close()
-    context.term()
+    s.close()
+    ctx.term()
 
 
 if __name__ == "__main__":
