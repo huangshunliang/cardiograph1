@@ -17,12 +17,11 @@ import zmq
 def main():
     """ main method """
 
-    serverip = '79.98.29.93'
-    serverport = '9092'
+    servers = ['preacher.veox.pw:9092']
 
-    ctx = zmq.Context()
-    s = ctx.socket(zmq.SUB)
-    s.connect('tcp://' + serverip + ':' + serverport)
+    context = zmq.Context()
+    s = context.socket(zmq.SUB)
+    s.connect('tcp://' + servers[0])
     s.setsockopt(zmq.SUBSCRIBE, b'')    # subscribe to everything
 
     print("Entering main loop.")
@@ -30,11 +29,11 @@ def main():
         reply = s.recv()
         reply = reply[::-1] # obelisk sent little-endian
         data = ':'.join(hex(x)[2:] for x in reply)
-        print(serverip, data)
+        print(servers[0], data)
 
     # We never get here but clean up anyhow
     s.close()
-    ctx.term()
+    context.term()
 
 
 if __name__ == "__main__":
