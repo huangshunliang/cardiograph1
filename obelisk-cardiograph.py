@@ -1,14 +1,18 @@
 #!/usr/bin/env python
 
 """
-    obelisk-cardiograph
-    Monitor obelisk servers' heartbeat.
+obelisk-cardiograph
+Monitor obelisk servers' heartbeat.
+Author: Noel Maersk <veox ta wemakethings tod net>
 
-    Based on "Pubsub envelope subscriber" example from zguide
-    Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
+Based on "Pubsub envelope subscriber" example from zguide
+Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
 
 """
+
+
 import zmq
+
 
 def main():
     """ main method """
