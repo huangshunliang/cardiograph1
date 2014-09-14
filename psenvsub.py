@@ -1,8 +1,11 @@
+#!/usr/bin/env python
+
 """
+    obelisk-cardiograph
+    Monitor obelisk servers' heartbeat.
 
-   Pubsub envelope subscriber
-
-   Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
+    Based on "Pubsub envelope subscriber" example from zguide
+    Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
 
 """
 import zmq
@@ -13,9 +16,10 @@ def main():
     # Prepare our context and publisher
     context    = zmq.Context()
     subscriber = context.socket(zmq.SUB)
-    subscriber.connect("tcp://localhost:5563")
+    subscriber.connect("tcp://79.98.29.93:9092")
     subscriber.setsockopt(zmq.SUBSCRIBE, b"B")
 
+    print("Entering main loop.")
     while True:
         # Read envelope with address
         [address, contents] = subscriber.recv_multipart()
