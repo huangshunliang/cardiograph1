@@ -14,25 +14,55 @@ Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
 import zmq
 
 
-serveraddresses = ['obelisk.coinkite.com:9092',
-                   'preacher.veox.pw:9092']
+serverlist = [{'address': 'tcp://obelisk.coinkite.com:9092', 'network': 'bitcoin'},
+              {'address': 'tcp://preacher.veox.pw:9092', 'network': 'bitcoin-testnet'}]
 
 
-class Server:
+class Server(object):
     """
     """
-    def __init__(self, zmqcontext, address = 'tcp://localhost:9092'):
+    def __init__(self, zmqcontext, properties):
         """
         """
-        self.address = address
+        # Consider using an initialiser wrapper as in
+        # https://stackoverflow.com/questions/1389180
+        # if the property list gets too long.
+        # Alternatively, find if there's a lib way to do it.
+        self._address = properties['address']
+        self._network = properties['network']
         self.socket = zmqcontext.socket(zmq.SUB)
+
+    @property
+    def address(self):
+        """tcp://<server-address>:<port>"""
+        return self._address
+
+    @address.setter
+    def address(self, value):
+        self._address = value
+
+    @property
+    def network(self):
+        """Human-readable string description of the P2P network."""
+        return self._network
+
+    @network.setter
+    def network(self, value):
+        self._network = value
+
+    def receive_heartbeat(self):
+        """
+        """
+        rawreply = self.socket.recv()
+        reply = rawreply[::-1]  # obelisk sends little-endian
+        return ':'.join(hex(x)[2:] for x in reply)
 
     def connect(self, address = ''):
         """
         """
         if address == '':
-            address = self.address
-        self.socket.connect('tcp://' + address)
+            address = self._address
+        self.socket.connect(address)
         self.socket.setsockopt(zmq.SUBSCRIBE, b'')
 
     def disconnect(self):
@@ -40,32 +70,20 @@ class Server:
         """
         self.socket.close()
 
-    def get_address(self):
-        """
-        """
-        return self.address
-
-    def get_heartbeat(self):
-        """
-        """
-        rawreply = self.socket.recv()
-        reply = rawreply[::-1]  # obelisk sends little-endian
-        return ':'.join(hex(x)[2:] for x in reply)
-
 
 def main():
     """ main method """
     context = zmq.Context()
     servers = []
-    for address in serveraddresses:
-        server = Server(context, address)
+    for i in serverlist:
+        server = Server(context, i)
         server.connect()
         servers.append(server)
         
     print("Entering main loop.")
     while True:
         for server in servers:
-            print(server.get_address(), server.get_heartbeat())
+            print(server.network, server.address, server.receive_heartbeat())
 
     # We never get here but clean up anyhow
     for server in servers:
