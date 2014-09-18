@@ -14,7 +14,8 @@ Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
 import zmq
 
 
-serveraddresses = ['preacher.veox.pw:9092']
+serveraddresses = ['obelisk.coinkite.com:9092',
+                   'preacher.veox.pw:9092']
 
 
 class Server:
