@@ -2,11 +2,12 @@
 
 """
 obelisk-cardiograph
-Monitor obelisk servers' heartbeat.
+Script to monitor obelisk servers' heartbeat.
 Author: Noel Maersk <veox ta wemakethings tod net>
+License: Affero GNU GPLv3 (see LICENSE).
 
-Based on "Pubsub envelope subscriber" example from zguide
-Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
+A few examples from `zguide` were used, see:
+https://github.com/imatix/zguide
 
 """
 
@@ -14,6 +15,7 @@ Author: Guillaume Aubert (gaubert) <guillaume(dot)aubert(at)gmail(dot)com>
 import zmq
 
 
+# This list is necessarily over 72 characters wide.
 serverlist = [{'address': 'tcp://obelisk.coinkite.com:9092', 'network': 'bitcoin'},
               {'address': 'tcp://preacher.veox.pw:9092', 'network': 'bitcoin-testnet'}]
 
@@ -83,7 +85,8 @@ def main():
     print("Entering main loop.")
     while True:
         for server in servers:
-            print(server.network, server.address, server.receive_heartbeat())
+            print(server.network, server.address,
+                  server.receive_heartbeat())
 
     # We never get here but clean up anyhow
     for server in servers:
