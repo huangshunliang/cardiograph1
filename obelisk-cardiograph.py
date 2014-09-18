@@ -59,10 +59,10 @@ class Server(object):
         reply = rawreply[::-1]  # obelisk sends little-endian
         return ':'.join(hex(x)[2:] for x in reply)
 
-    def connect(self, address = ''):
+    def connect(self, address = None):
         """
         """
-        if address == '':
+        if address == None:
             address = self._address
         self.socket.connect(address)
         self.socket.setsockopt(zmq.SUBSCRIBE, b'')
